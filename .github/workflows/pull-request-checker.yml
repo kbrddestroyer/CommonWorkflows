@@ -5,6 +5,9 @@ on:
       project_name:
         required: true
         type: string
+      VALID_SECTIONS:
+        required: true
+        type: string
 
 jobs:
   checker:
@@ -26,14 +29,19 @@ jobs:
             if [[ $BRANCH_NAME =~ ^feature/ ]]; then
               exit 0
             fi
+            if [[ $BRANCH_NAME == main ]]; then
+              exit 0
+            fi
             echo "Error: Branch name must start with 'wip/'."
             exit 1
           fi
 
           CENTRAL_SECTION=$(echo $BRANCH_NAME | cut -d'/' -f2)
-          VALID_SECTIONS=("actions" "usermode" "kernelmode" "docs" "offsets")
+          VALID_SECTIONS=${{ inputs.VALID_SECTIONS }}
 
-          if [[ ! " ${VALID_SECTIONS[@]} " =~ " ${CENTRAL_SECTION} " ]]; then
+          IFS=',' read -r -a sections_array <<< "$VALID_SECTIONS"
+
+          if [[ ! " ${sections_array[@]} " =~ " ${CENTRAL_SECTION} " ]]; then
             echo "Error: Central section '$CENTRAL_SECTION' is not valid."
             exit 1
           fi
