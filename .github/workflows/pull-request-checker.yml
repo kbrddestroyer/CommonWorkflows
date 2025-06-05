@@ -22,7 +22,7 @@ jobs:
         id: validate-name
         run: |
           echo $BRANCH_NAME
-          if [[ ! $BRANCH_NAME =~ ^wip/ | ! $BRANCH_NAME =~ ^dev/ ]]; then
+          if [[ ! $BRANCH_NAME =~ ^wip/ || ! $BRANCH_NAME =~ ^dev/ ]]; then
             if [[ $BRANCH_NAME == release ]]; then
               exit 0
             fi
